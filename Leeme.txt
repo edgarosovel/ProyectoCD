@@ -1,0 +1,9 @@
+#####DOMINGO 25 DE SEPTIEMBRE DE 2016, 12:59 PM (EDGAR)
+El link que uso para accesar es
+http://localhost:9999/proyectocd/
+como ven lo tengo configurado en el puerto 9999, así que para que les funcione necesitaran configurar su xampp en ese mismo puerto o editar el link en el archivo "config.php" y también el que está en le archivo "public\js\config.js". Si tienen muchos problemas para esto, avísenme para cambiar el puerto al determinado y usar "http://localhost/proyectocd/" para así todos tenerlo igual.
+La contraseña ya va hasheada al iniciar sesión, y como falta el controlador de Teo para registrar el usuario deberán cambiar las contraseñas en sus bases de datos a "8e30a36c4dc9f59c6d8e7203591d5e4bbf6c4e511c78af70b2da6798e217a8aa9480678ebd1304a775ceef2835eb80e89f1315acd37e5e819cffe956b9bf83cb" que es "123" pero encriptada.
+Algunos nombres de las columnas de la base de datos las cambié (no cumplían con las buenas prácticas para bases de datos), así que puede que les mande error si no las tienen igual. Les dejo la imagen "base_de_datos.png" en la carpeta con todos los nombres para que los comparen con su base de datos, y modifiquen los nombres.
+Desde aquí ya podrán usar el proyecto. Propongo que cada que hagan un cambio al proyecto escriban aquí lo que cambiaron, aún así recuerden comentar todo su código.
+Este proyecto ya revisa los logs para ver si se puede o no iniciar sesión. Falta que Jorgito incluya la creación de los logs una vez que cree o destruya la sesión.
+Happy coding :)

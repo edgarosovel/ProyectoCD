@@ -8,7 +8,7 @@ public function registrarUsuario() {
 	if (username != '' && password != '' && apellidoM != '' && apellidoP != '') {
 		if (validarUser()) {
 			var url = config['url']+"Usuario/registrar/";
-		    var datos = "username=" + username + "&password=" + password + "&apellidoP" + apellidoP + "&apellidoM" + apellidoM;
+		    var datos = "username=" + username + "&password=" + password + "&apellidoP=" + apellidoP + "&apellidoM=" + apellidoM;
 		    
 			register = new XMLHttpRequest();
 			register.open("POST", url ,true);
@@ -22,7 +22,6 @@ public function registrarUsuario() {
 		                alert("El usuario ya existe");
 		                //location.reload();
 		                break;
-
 		                default:
 		                alert("Usuario registrado exitósamente");
 		                break;

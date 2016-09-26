@@ -16,57 +16,20 @@
 		* 	1: Inicio de sesión exitoso.
 		*	2: Inicio de sesión fallido.
 		*	3: No se encontró el registro.
-		*	4: Hay una sesión iniciada.
 		*/
 		public function iniciarSesion($idUsuario,$password){
 			
 			$registro = $this->db->select('*', 'usuarios', "idUsuario='".$idUsuario."'");
-			if(is_array($registro)){
-				if($registro['pass'] == Hash::create(ALGOR,$password,KEY)){
-					$yaHaySesion = $this->revisarLogs($idUsuario);
-					if($yaHaySesion==0){
-						return 4;
-					}
-					else{
-						$this->crearSesion($idUsuario);
-						return 1;
-					}	
+
+			if( is_array($registro) ) {
+				if( $registro['pass'] == /*Hash::create(ALGOR,*/ $password/*,KEY)*/ ){
+					$this->crearSesion($idUsuario);
+					return 1;
 				} else {
 					return 2;
 				}
 			} else {
 				return 3;
-			}
-		}
-
-		/**
-		*	Función para verificar si ya existe una sesión en otro dispositivo.
-		*
-		* @param String $idUsuario 
-		*
-		* @return 0: Hay una sesion ya iniciada
-		*	1: Se puede iniciar sesion
-		*/
-		public function revisarLogs($idUsuario){
-			$maxEntrada = $this->db->select('MAX(idLog) as RES', 'Logs', "idUsuario=".$idUsuario." AND idTipo=1");
-			if(!is_null($maxEntrada['RES'])){
-				$maxSalida = $this->db->select('MAX(idLog) as RES', 'Logs', "idUsuario=".$idUsuario." AND idTipo=2");
-				if(!is_null($maxSalida['RES'])){
-					$ultimaEntrada = $this->db->select('tiempo as RES', 'Logs', "idUsuario=".$idUsuario." AND idLog=".$maxEntrada['RES']);
-					$ultimaSalida = $this->db->select('tiempo as RES', 'Logs', "idUsuario=".$idUsuario." AND idLog=".$maxSalida['RES']);
-					if($ultimaEntrada['RES']>$ultimaSalida['RES']){
-						return 0;
-					}
-					else{
-						return 1;
-					}
-				}
-				else{
-					return 0;
-				}
-			}
-			else{
-				return 1;
 			}
 		}
 
@@ -135,14 +98,14 @@
 
 		private function crearSesion($idUsuario){
 
-        	$registro = $this->db->select('*', 'Usuarios', "idUsuario = '$idUsuario'");
-        	$tipoUsuario = $this->db->select('*', 'tipoUsuarios', "idTipoUsuario = ".$registro['idTipoUsuario']);
+        	$registro = $this->db->select('*', 'usuarios', "idUsuario = '$idUsuario'");
+        	$tipoUsuario = $this->db->select('*', 'tipousuario', "idTipoUsuario = ".$registro['idTipoUsuario']);
 
         	Session::setValue('idUsuario', $idUsuario);
         	Session::setValue('idTipoUsuario', $registro['idTipoUsuario']);
         	Session::setValue('imagenPerfil', ($registro['foto']!=null) ? $registro['foto'] : "default.png" );
         	//Session::setValue('correo', $registro['correo'] );
-        	Session::setValue('nombreUsuario', $registro['nombre'].' '.$registro['apellidoP'].' '.$registro['apellidoM']);
+        	Session::setValue('nombre', $registro['nombre'].' '.$registro['apellidoP'].' '.$registro['apellidoM']);
         	Session::setValue('tipoUsuario', ucwords($tipoUsuario['descripcion']));
 
         	$this->crearMenu($registro['idTipoUsuario']);
@@ -201,6 +164,21 @@
 	     	}
 	     	
 	     	Session::setValue('menu',$menu);
+    	}
+    	public function registrar($nom, $apellidoP, $apellidoM,$pass, $dirFoto="default.png"){
+    		$values = array('consulta' => null,'id' => null );
+    		$yaExiste = $this->db->select('*','usuarios',"nombre = '.$nom.'");
+    		if(is_array($yaExiste)){
+    			$values['consulta'] = 0;
+    		}
+
+    		$datos = array('idUsuario'=>0,'idTipoUsuario'=>3,'nombre'=>$nom,'apellidoP'=>$apellidoP,'apellidoM'=>$apellidoM,'pass'=>$pass,'foto'=>$dirFoto);
+    		if($this->db->insert($datos,'usuarios')){
+    			$values['consulta'] = 1;
+    			$id = $this->db->select('*','usuarios',"nombre LIKE '".$nom."'");
+    			$values['id'] = $id['idUsuario'];
+    		}
+    		return $values;
     	}
 	}
 
